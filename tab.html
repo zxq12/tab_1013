@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			div{
+				float: left;
+			}
+			ul{
+				margin: 0px;
+				padding: 0px;
+			}
+			li{
+				padding: 0px;
+				float: left;
+				list-style: none;
+				font-size: 12px;
+				color: #666;
+				width: 80.5px;
+				height: 23px;
+				line-height: 23px;
+				text-align: center;
+				border: 1px solid #e5e5e5;
+				border-left: 0;
+				position: relative;
+				margin-left: 12.5px;
+			}
+			.last_after{
+				position: absolute;
+				width: 0;
+				height: 0;
+				content: '';
+				border: 12.5px solid #e5e5e5;
+				border-top-color: transparent;
+				border-bottom-color: transparent;
+				border-right-color: transparent;
+				top:-1px;
+				z-index: 1;
+			}
+			.last_before{
+				position: absolute;
+				width: 0;
+				height: 0;
+				content: '';
+				border:11.5px solid #fff;
+				border-top-color: transparent;
+				border-bottom-color: transparent;
+				border-right-color: transparent;
+				top:0;
+				z-index: 2;
+			}
+			.next_after{
+				position: absolute;
+				width: 0;
+				height: 0;
+				content: '';
+				left: 81.5px;
+				border: 12.5px solid #e5e5e5;
+				border-top-color: transparent;
+				border-bottom-color: transparent;
+				border-right-color: transparent;
+				top:-1px;
+				z-index: 1;
+			}
+			.next_before{
+				position: absolute;
+				width: 0;
+				height: 0;
+				content: '';
+				left: 80.5px;
+				border:11.5px solid #FFFFFF;
+				border-top-color: transparent;
+				border-bottom-color: transparent;
+				border-right-color: transparent;
+				top:0;
+				z-index: 2;
+			}
+			.first{
+				border-left:1px solid #e5e5e5;
+				margin-left: 0;
+				background-color: #f6f6f6;
+			}
+			.first .next_before{
+				border-left-color: #f6f6f6;
+			}
+			.end{
+				height: 23px;
+				border-right:1px solid #e5e5e5;
+			}
+			.wait{
+				background-color:#108ee9 ;
+				border-color: #108EE9;
+				color: #fff;
+			}
+			.wait .next_after,.wait .next_before{
+				border-left-color: #108EE9;
+			}
+			.stop{
+				color: #d0021b;
+				border: 1px solid #d0021b;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<!--<ul>
+			<li class="first">
+				草稿
+				<div class="next_before"></div>
+				<div class="next_after"></div>
+			</li>
+			<li class="wait">
+				待审核
+				<div class="last_before"></div>
+				<div class="last_after"></div>
+				<div class="next_before"></div>
+				<div class="next_after"></div>
+			</li>
+			<li>
+				待复核
+				<div class="last_before"></div>
+				<div class="last_after"></div>
+				<div class="next_before"></div>
+				<div class="next_after"></div>
+			</li>
+			<li>
+				已核准
+				<div class="last_before"></div>
+				<div class="last_after"></div>
+				<div class="end"></div>
+			</li>
+			<li class="stop">
+				已中止
+			</li>
+		</ul>-->
+	</body>
+	<script type="text/javascript">
+			function init(array){
+				console.log(array);
+				var ul = document.createElement("ul");
+				for (var i=0; i<array.length; i++) {
+					var li = document.createElement("li");
+					li.innerHTML = array[i].name;
+					if(i==array.length-1){
+						//有且仅有一个对象
+						if (array.length==1) {
+							li.setAttribute("class","stop");
+						} else {
+							//最后一个
+							var lb = document.createElement("div");
+							var la = document.createElement("div");
+							var end = document.createElement("div");
+							lb.setAttribute("class","last_before");
+							la.setAttribute("class","last_after");
+							end.setAttribute("class","end");
+							li.appendChild(lb);
+							li.appendChild(la);
+							li.appendChild(end);
+						}
+					} else {
+						if (array[i].isCurrentStatus && array[i].isShadowed) {
+							//蓝色
+							li.setAttribute("class","wait");
+							var nb = document.createElement("div");
+							var na = document.createElement("div");
+							var lb = document.createElement("div");
+							var la = document.createElement("div");
+							nb.setAttribute("class","next_before");
+							na.setAttribute("class","next_after");
+							lb.setAttribute("class","last_before");
+							la.setAttribute("class","last_after");
+							li.appendChild(nb);
+							li.appendChild(na);
+							li.appendChild(lb);
+							li.appendChild(la);
+						} else if(array[i].isShadowed){
+							//灰色
+							li.setAttribute("class","first");
+							var nb = document.createElement("div");
+							var na = document.createElement("div");
+							nb.setAttribute("class","next_before");
+							na.setAttribute("class","next_after");
+							li.appendChild(nb);
+							li.appendChild(na);
+						} else {
+							//其他
+							var nb = document.createElement("div");
+							var na = document.createElement("div");
+							var lb = document.createElement("div");
+							var la = document.createElement("div");
+							nb.setAttribute("class","next_before");
+							na.setAttribute("class","next_after");
+							lb.setAttribute("class","last_before");
+							la.setAttribute("class","last_after");
+							li.appendChild(nb);
+							li.appendChild(na);
+							li.appendChild(lb);
+							li.appendChild(la);
+						}
+					}
+					ul.appendChild(li);
+				}
+				document.body.appendChild(ul);
+			}
+			var tabArray = [{"name":"待接单","status":"WAIT_ACCEPT","isShadowed":true},{"name":"待发货","status":"WAIT_DELIVER","isShadowed":true,"isCurrentStatus":true},{"name":"验货入库","status":"STOCK_IN"},{"name":"已完成","status":"DELIVERED"}];
+			init(tabArray);
+		</script>
+</html>
